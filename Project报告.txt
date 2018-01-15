@@ -1,0 +1,27 @@
+计算机图形学Project
+
+Project 1-4均使用HTML编写，可以在Chrome上运行。
+所有Project部署于服务器上，可以访问http://t.zyr17.cn/static/CG/index.html查看。由于网速较慢，Project3的模型加载会消耗较多时间，同时可能会出现模型加载完材质没有加载完导致模型呈现全黑的情况，需要耐心等待。
+本地运行需要安装Python并配置为环境变量，然后运行“python -m SimpleHTTPServer 1223”并访问127.0.0.1:1223/index.html查看各个Project。
+
+Project1 音乐可视化
+选择一个本地的常见音乐文件上传后，可以显示音乐的频谱。
+使用Web API AudioContext实现。
+
+Project2 图形的交互
+网页中会显示一个绿色的立方体。在网页中拖动鼠标可以旋转立方体。
+使用THREE.js实现。
+
+Project3 真实感景物
+点击网页中的按钮，会显示一个真实感模型并旋转展示。
+使用THREE.js实现。
+
+Project4 Flash动画
+网页会加载自制的Flash动画。Flash动画的swf文件和fla文件均存于网页所在文件夹中。
+
+Project1 论文翻译
+翻译文章为SIGGRAPH 2017 Patch-Based Optimization for Image-Based Texture Mapping的重点内容。
+
+Project1-3目录下有网页的示例截图。
+
+14307130167 蒋骐泽

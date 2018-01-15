@@ -1,0 +1,80 @@
+<!DOCTYPE html> 
+<html lang="zh-cn">
+    <head>
+		<title>真实感景物</title>
+        <meta charset="utf-8">
+        <script src="https://cdn.bootcss.com/three.js/r83/three.js" type="text/javascript" ></script>
+        <script src="OBJLoader.js" type="text/javascript" ></script>
+        <script src="MTLLoader.js" type="text/javascript" ></script>
+		<script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+		<style>
+			input {
+				margin: 5px;
+			}
+		</style>
+    </head>
+    <body>
+		<div style="display: flex; flex-direction: row;">
+			<input type="button" value="rock">
+			<input type="button" value="planet">
+			<input type="button" value="nanosuit">
+			<input type="button" value="cyborg">
+		</div>
+		<script type="text/javascript">
+var scene,camera,renderer;
+var obj;
+
+function init(modelname){
+
+	scene = new THREE.Scene();
+
+	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+	camera.position.z = 20;
+
+	var light = new THREE.DirectionalLight();
+	light.intensity = 1;
+	light.position.set(0, 1, 0);
+	scene.add(light);
+
+	var light = new THREE.AmbientLight(0xffffff);
+	light.intensity = 1.5;
+	scene.add(light);
+	renderer = new THREE.WebGLRenderer();
+
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setClearColor(0xffffff);
+	$('canvas').remove();
+	document.body.appendChild(renderer.domElement);
+
+	var texture = new THREE.Texture();
+	var ml = new THREE.MTLLoader();
+
+	ml.setPath('objects/' + modelname + '/');
+	ml.load(modelname + '.mtl', function(m){
+		var loader = new THREE.OBJLoader();
+		loader.setMaterials(m);
+		loader.load('objects/' + modelname + '/' + modelname + '.obj', function(object){
+			scene.add(object);
+			obj = object;
+		});           
+	});
+}
+
+function render(){
+	if (renderer != undefined && obj != undefined){
+		renderer.render(scene,camera);
+		obj.rotation.x += 0.02;
+		obj.rotation.y += 0.0175;
+		obj.rotation.z += 0.015;
+	}
+	requestAnimationFrame(render);
+}
+
+render();
+
+$('input').click(function () {
+	init($(this).val());
+});
+		</script>
+    </body>
+</html>

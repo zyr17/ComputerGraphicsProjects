@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>音乐可视化</title>
+        <meta charset="utf-8">
+		<style>
+		canvas {
+			background: #000;
+		}
+		</style>
+		<script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div>
+				<label>选择文件播放 </label>
+				<input type="file" id="fileinput"></input>
+			</div>
+			<div style="text-align: center;">
+				<canvas width="900" height="510"></canvas>
+			</div>
+		</div>
+		<script>
+var AC = new AudioContext();
+
+$('#fileinput').change(function() {
+	if (this.files.length !== 0) {
+		file = this.files[0];
+		fileName = file.name;
+		start();
+	};
+});
+
+function start() {
+	console.log(file, fileName);
+    var fr = new FileReader(); 
+    fr.onload = function(e) {
+        var res = e.target.result; 
+        AC.decodeAudioData(res, function(buf) {
+            show(buf);
+        }, function(e) {
+            console.log("decoding failed!");
+        });
+    };
+    fr.readAsArrayBuffer(file);
+}
+
+var bs;
+var analyser = AC.createAnalyser();
+
+function show(buf) {
+	if (bs != undefined)
+		bs.stop();
+	bs = AC.createBufferSource();
+	bs.buffer = buf;
+	bs.connect(analyser);
+	analyser.connect(AC.destination);
+	bs.start();
+}
+
+var canvas = $('canvas')[0];
+var context = canvas.getContext('2d');
+var lg = context.createLinearGradient(0, canvas.height * .25, 0, canvas.height);
+lg.addColorStop(0, 'red');
+lg.addColorStop(0.45, '#ff0');
+lg.addColorStop(0.55, '#ff0');
+lg.addColorStop(1, '#0f0');
+context.fillStyle = lg;
+context.strokeStyle = 'white';
+
+var maxcap = [];
+
+function draw() {
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	var array = new Uint8Array(analyser.frequencyBinCount);
+	analyser.getByteFrequencyData(array);
+	var l = 900;
+	if (array.length < 900)
+		l = array.length;
+	var width = canvas.width * 1. / l;
+	for (var i = 0; i < l; i ++ ){
+		var nowpos = canvas.height * (1 - array[i] / 255.);
+		if (maxcap[i] == undefined)
+			maxcap[i] = canvas.height;
+		if (maxcap[i] != canvas.height)
+			maxcap[i] ++ ;
+		if (nowpos <= maxcap[i])
+			maxcap[i] = nowpos - 1;
+		context.fillRect(i * width, nowpos, width, canvas.height);
+	}
+	context.beginPath();
+	context.moveTo(0, maxcap[0]);
+	for (var i = 0; i < l; i ++ ){
+		context.lineTo(i * width, maxcap[i]);
+	}
+	context.stroke();
+	requestAnimationFrame(draw);
+}
+draw();
+
+		</script>
+	</body>
+</html>

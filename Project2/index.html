@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>图形的交互</title>
+        <meta charset="utf-8">
+		<script src="https://cdn.bootcss.com/three.js/r83/three.js"></script>
+		<script src="http://libs.baidu.com/jquery/2.1.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<script>
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+var renderer = new THREE.WebGLRenderer();
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0xffffff);
+
+document.body.appendChild(renderer.domElement);
+var geometry = new THREE.CubeGeometry(1, 1, 1);
+var material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
+var cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+var light = new THREE.DirectionalLight();
+light.intensity = 1;
+light.position.set(0, 1, 2);
+scene.add(light);
+
+camera.position.z = 5;
+function render(x, y) {
+	cube.rotation.x += x / 10.0;
+	cube.rotation.y += y / 10.0;
+	renderer.render(scene, camera);
+}
+
+var isdown = false;
+var lastx = 0, lasty = 0;
+$('body').mousedown(function (e) { isdown = true; lastx = e.pageX; lasty = e.pageY; });
+$('body').mouseup(function () { isdown = false; });
+$('body').mousemove(function (e) {
+	if (isdown){
+		render(e.pageY - lasty, e.pageX - lastx);
+		lastx = e.pageX;
+		lasty = e.pageY;
+	}
+});
+renderer.render(scene, camera);
+		</script>
+	</body>
+</html>
